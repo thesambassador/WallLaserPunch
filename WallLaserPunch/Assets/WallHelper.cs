@@ -7,17 +7,28 @@ public class WallHelper : MonoBehaviour {
     public GameObject WallPrefab;
     public float WallHeight;
 
-    [HideInInspector]
-    public GameObject FrontWall;
+    public WallInfo[] Walls;
 
     [HideInInspector]
-    public GameObject BackWall;
+    public WallInfo FrontWall {
+        get { return Walls[0]; }
+    }
 
     [HideInInspector]
-    public GameObject RightWall;
+    public WallInfo BackWall {
+        get { return Walls[1]; }
+    }
 
     [HideInInspector]
-    public GameObject LeftWall;
+    public WallInfo LeftWall {
+        get { return Walls[2]; }
+    }
+
+    [HideInInspector]
+    public WallInfo RightWall {
+        get { return Walls[3]; }
+    }
+
 
     private PlayAreaHelper _playHelper;
 
@@ -31,33 +42,35 @@ public class WallHelper : MonoBehaviour {
 		
 	}
 
-    public void GenerateWalls()
-    {
+    public void GenerateWalls() {
         _playHelper = GetComponent<PlayAreaHelper>();
+        Walls = new WallInfo[4];
 
         Vector3[] positions = { _playHelper.FrontCenter, _playHelper.BackCenter, _playHelper.RightCenter, _playHelper.LeftCenter };
         Vector3[] lookRotations = { Vector3.back, Vector3.forward, Vector3.left, Vector3.right };
+        WallDir[] dirs = {WallDir.Front, WallDir.Back, WallDir.Right, WallDir.Left};
        
-
         for (int i = 0; i < 4; i++)
         {
             GameObject newWall = Instantiate(WallPrefab);
-            Vector3 wallCenter = positions[i];
-            wallCenter.y = WallHeight / 2;
-            newWall.transform.position = wallCenter;
-            newWall.transform.rotation = Quaternion.LookRotation(lookRotations[i]);
 
-            if (i < 2)
+            WallInfo info = newWall.GetComponent<WallInfo>();
+            if (info != null)
             {
-                newWall.transform.localScale = new Vector3(_playHelper.PlaySpaceRect.width, WallHeight, 1);
+                Vector3 wallCenter = positions[i];
+                wallCenter.y = WallHeight / 2;
+                newWall.transform.rotation = Quaternion.LookRotation(lookRotations[i]);
+                newWall.transform.parent = this.transform;
+                float width = _playHelper.PlaySpaceRect.width;
+                if (i >= 2)
+                {
+                    width = _playHelper.PlaySpaceRect.height;
+                }
+
+                info.SetWallProperties(wallCenter, width, WallHeight, dirs[i]);
+                Walls[i] = info;
             }
-            else
-            {
-                newWall.transform.localScale = new Vector3(_playHelper.PlaySpaceRect.height, WallHeight, 1);
-            }
+
         }
-
-       
-        
     }
 }
