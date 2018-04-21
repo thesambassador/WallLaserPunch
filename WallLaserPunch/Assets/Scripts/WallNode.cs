@@ -15,6 +15,7 @@ public class WallNode : MonoBehaviour {
 
 	public WallNodeState NodeState = WallNodeState.Off;
 	public WallNodeTriggers NodeTriggers;
+	public LaserNode Laser;
 
 	private WallNodeEvent _onNodePunched;
 	public WallNodeEvent OnNodePunched {
@@ -39,6 +40,15 @@ public class WallNode : MonoBehaviour {
 	public void SetPunchable(bool isLeft) {
 		NodeTriggers.SetPunchable(isLeft);
 		NodeState = WallNodeState.Punchable;
+	}
+
+	public void SetLaser() {
+		NodeState = WallNodeState.Laser;
+		Laser.StartLaser(1,2,1,LaserDone);
+	}
+
+	public void LaserDone() {
+		NodeState = WallNodeState.Off;
 	}
 
 	public void NodePunched() {

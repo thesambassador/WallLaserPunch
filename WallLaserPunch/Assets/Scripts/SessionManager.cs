@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public enum SessionState {
 	None,
@@ -13,7 +14,8 @@ public class SessionManager : SingletonBehavior<SessionManager> {
 	public WallHelper Walls;
 
 	public WallNodeManager[] WallNodeManagers;
-
+	public LaserManager LaserManager;
+	
 	private int[] _randomWallIndexes = {0,1,2,3};
 
 	[HideInInspector]
@@ -27,6 +29,10 @@ public class SessionManager : SingletonBehavior<SessionManager> {
 	private bool _lastNodeLeft = false;
 
 	void Start(){
+		
+	}
+
+	public void Initialize() {
 		Walls = FindObjectOfType<WallHelper>();
 
 		WallNodeManagers = new WallNodeManager[4];
@@ -35,8 +41,7 @@ public class SessionManager : SingletonBehavior<SessionManager> {
 		}
 
 		_randomWallIndexes.Shuffle();
-
-		StartGame();
+		LaserManager.Initialize();
 	}
 
 	//Selects a random wall to use using _randomWallIndexes
@@ -52,7 +57,10 @@ public class SessionManager : SingletonBehavior<SessionManager> {
 		return WallNodeManagers[wnmIndex];
 	}
 
+	[Button]
 	public void StartGame() {
+		Initialize();
+
 		NodesPunched = 0;
 		GameTime = 0;
 		State = SessionState.Game;

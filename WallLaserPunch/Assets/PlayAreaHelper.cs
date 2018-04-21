@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayAreaHelper : MonoBehaviour {
+public class PlayAreaHelper : SingletonBehavior<PlayAreaHelper> {
 
     public SteamVR_PlayArea PlayArea;
     public float PlaySpaceMargin = 0.15f;
